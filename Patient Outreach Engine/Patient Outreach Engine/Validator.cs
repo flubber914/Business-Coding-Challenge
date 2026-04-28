@@ -27,6 +27,7 @@ namespace Patient_Outreach_Engine
             {
                 ValidatePatient(patient);
             }
+            Console.WriteLine("Validation complete");
         }
         /// <summary>
         /// takes a patient, and determines how to contact the dispatcher
@@ -44,7 +45,7 @@ namespace Patient_Outreach_Engine
                     break;
                 case Patient.RiskLevel.High:
                     Console.WriteLine($"{patient.GetName()} is High risk, {patient.GetName()} will be referred to caseworker.");
-                    m_dispatcher.DispatchController(new DispatchPacket(false, true));
+                    m_dispatcher.DispatchController(new DispatchPacket(false, true, patient.GetContactMethod()));
                     return;
                 default:
                     break;
@@ -52,14 +53,13 @@ namespace Patient_Outreach_Engine
             switch (patient.GetContactMethod())
             {
                 case Patient.PreferredContact.Mobile:
-                    break;
                 case Patient.PreferredContact.Email:
-                    break;
                 case Patient.PreferredContact.SMS:
-                    break;
                 case Patient.PreferredContact.Mail:
+                    m_dispatcher.DispatchController(new DispatchPacket(true, false, patient.GetContactMethod()));
                     break;
                 case Patient.PreferredContact.Private:
+                    m_dispatcher.DispatchController(new DispatchPacket(false, false, patient.GetContactMethod()));
                     break;
                 default:
                     break;
