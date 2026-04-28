@@ -51,7 +51,9 @@ namespace Patient_Outreach_Engine
                 new Patient("Ava Lee", RiskLevel.High, PreferredContact.Mail, "Standard post preferred.")
             };
         }
-
+        /// <summary>
+        /// prints each element in the database using patient.printEntry function
+        /// </summary>
         public void PrintDataBase()
         {
             foreach (var item in m_data)

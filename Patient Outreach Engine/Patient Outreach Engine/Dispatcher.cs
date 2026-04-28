@@ -6,5 +6,14 @@ namespace Patient_Outreach_Engine
 {
     internal class Dispatcher
     {
-    }
+        public Dispatcher()
+        {
+
+        }
+
+        public void DispatchController(DispatchPacket packet)
+        {
+
+        }
+    };
 }
