@@ -29,13 +29,14 @@ namespace Patient_Outreach_Engine
                 packets.Add(ValidatePatient(patient));
             }
             Console.WriteLine("Validation complete, sending to dispatcher");
+            Console.WriteLine("------------------------------------");
             m_dispatcher.DispatchController(packets);
         }
         /// <summary>
         /// takes a patient, and determines how to contact the dispatcher
         /// </summary>
         /// <param name="patient"></param>
-        public DispatchPacket ValidatePatient(Patient patient)
+        private DispatchPacket ValidatePatient(Patient patient)
         {
             try
             {
@@ -45,7 +46,7 @@ namespace Patient_Outreach_Engine
                 {
                     case Patient.RiskLevel.Low:
                     case Patient.RiskLevel.Medium:
-                        Console.WriteLine($"{patient.GetName()} is {patient.GetCurrentRisk} risk, contact method will be considered.");
+                        Console.WriteLine($"{patient.GetName()} is {patient.GetCurrentRisk()} risk, contact method will be considered.");
                         break;
                     case Patient.RiskLevel.High:
                         Console.WriteLine($"{patient.GetName()} is High risk, {patient.GetName()} will be referred to caseworker.");

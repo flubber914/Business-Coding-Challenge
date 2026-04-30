@@ -22,12 +22,10 @@ namespace Patient_Outreach_Engine
                 if (item.m_shouldMessage)
                 {
                     m_communication.ContactPatient(item.m_patient);
-                    Console.WriteLine($"{item.m_patient.GetName()} has been sent an automated appointment reminder through {item.m_patient.GetContactMethod()}.");
                 }
                 else if(item.m_shouldRefer)
                 {
                     m_communication.EscalatePatient(item.m_patient);
-                    Console.WriteLine($"{item.m_patient.GetName()} has not been sent a message, and has instead been escalated to a caseworker.");
                 }
                 else
                 {
