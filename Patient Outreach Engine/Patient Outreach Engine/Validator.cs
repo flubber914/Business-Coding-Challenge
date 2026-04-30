@@ -21,48 +21,55 @@ namespace Patient_Outreach_Engine
         /// <param name="database">database of patients created within database class in all cases for this demonstration</param>
         public void ValidateTable(List<Patient> database)
         {
+            List<DispatchPacket> packets = new List<DispatchPacket>();
             Console.WriteLine("------------------------------------");
             Console.WriteLine("Initialising validation of patient contact");
             foreach (Patient patient in database)
             {
-                ValidatePatient(patient);
+                packets.Add(ValidatePatient(patient));
             }
-            Console.WriteLine("Validation complete");
+            Console.WriteLine("Validation complete, sending to dispatcher");
+            m_dispatcher.DispatchController(packets);
         }
         /// <summary>
         /// takes a patient, and determines how to contact the dispatcher
         /// </summary>
         /// <param name="patient"></param>
-        public void ValidatePatient(Patient patient)
+        public DispatchPacket ValidatePatient(Patient patient)
         {
-            Console.WriteLine("---------------------");
-            Console.WriteLine($"Validating {patient.GetName()}");
-            switch (patient.GetCurrentRisk())
+            try
             {
-                case Patient.RiskLevel.Low:
-                case Patient.RiskLevel.Medium:
-                    Console.WriteLine($"{patient.GetName()} is {patient.GetCurrentRisk} risk, contact method will be considered.");
-                    break;
-                case Patient.RiskLevel.High:
-                    Console.WriteLine($"{patient.GetName()} is High risk, {patient.GetName()} will be referred to caseworker.");
-                    m_dispatcher.DispatchController(new DispatchPacket(false, true, patient.GetContactMethod()));
-                    return;
-                default:
-                    break;
+                Console.WriteLine("---------------------");
+                Console.WriteLine($"Validating {patient.GetName()}");
+                switch (patient.GetCurrentRisk())
+                {
+                    case Patient.RiskLevel.Low:
+                    case Patient.RiskLevel.Medium:
+                        Console.WriteLine($"{patient.GetName()} is {patient.GetCurrentRisk} risk, contact method will be considered.");
+                        break;
+                    case Patient.RiskLevel.High:
+                        Console.WriteLine($"{patient.GetName()} is High risk, {patient.GetName()} will be referred to caseworker.");
+                        return new DispatchPacket(false, true, patient);
+                    default:
+                        throw new ArgumentOutOfRangeException($"{patient.GetCurrentRisk()} is not a valid risk level");
+                }
+                switch (patient.GetContactMethod())
+                {
+                    case Patient.PreferredContact.Mobile:
+                    case Patient.PreferredContact.Email:
+                    case Patient.PreferredContact.SMS:
+                    case Patient.PreferredContact.Mail:
+                        return new DispatchPacket(true, false, patient);
+                    case Patient.PreferredContact.Private:
+                        return new DispatchPacket(false, false, patient);
+                    default:
+                        throw new ArgumentOutOfRangeException($"{patient.GetContactMethod()} is not a valid contact method");
+                }
             }
-            switch (patient.GetContactMethod())
+            catch 
             {
-                case Patient.PreferredContact.Mobile:
-                case Patient.PreferredContact.Email:
-                case Patient.PreferredContact.SMS:
-                case Patient.PreferredContact.Mail:
-                    m_dispatcher.DispatchController(new DispatchPacket(true, false, patient.GetContactMethod()));
-                    break;
-                case Patient.PreferredContact.Private:
-                    m_dispatcher.DispatchController(new DispatchPacket(false, false, patient.GetContactMethod()));
-                    break;
-                default:
-                    break;
+                Console.WriteLine("Patient information invalid, adding empty packet to list, follow up on invalid information.");
+                return new DispatchPacket();
             }
         }
     }
